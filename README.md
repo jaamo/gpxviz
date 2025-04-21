@@ -35,6 +35,12 @@ Created with Python 3.13.2
    ```
 3. Check the output in the `output/` folder.
 
+## Convert images to a video
+
+```bash
+ffmpeg -framerate 30 -pattern_type glob -i 'output/*.jpg' -c:v libx264 -pix_fmt yuv420p output.mp4
+```
+
 ## Bounding Box Finder
 
 Use these URLs to find the bounding box for your region:

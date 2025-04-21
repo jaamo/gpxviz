@@ -11,7 +11,7 @@ import time as time_module
 settings.WINDOW['class'] = 'moderngl_window.context.pyglet.window.Window'
 
 is_horizontal = False
-tracks_folder = 'tracks-all'
+tracks_folder = 'tracks'
 
 def load_all_gpx_tracks(folder_path):
     all_tracks = []
@@ -112,11 +112,11 @@ class GlowTrackRenderer(WindowConfig):
             in vec2 uv;
             out vec4 fragColor;
             void main() {
-                //float weights[5] = float[](0.204164, 0.304005, 0.093913, 0.018062, 0.002872);
-                float weights[5] = float[](0.4, 0.3, 0.2, 0.1, 0.05);
+                float weights[9] = float[](0.3, 0.2, 0.15, 0.1, 0.07,
+                                            0.03, 0.01, 0.005, 0.002);
                 vec2 tex_offset = direction / vec2(textureSize(tex, 0));
                 vec3 result = texture(tex, uv).rgb * weights[0];
-                for (int i = 1; i < 5; ++i) {
+                for (int i = 1; i < 9; ++i) {
                     result += texture(tex, uv + tex_offset * i).rgb * weights[i];
                     result += texture(tex, uv - tex_offset * i).rgb * weights[i];
                 }
@@ -276,7 +276,9 @@ class GlowTrackRenderer(WindowConfig):
         self.quad_fs.render(self.composite_prog)
 
         # Save frame as image
-        image = Image.frombytes('RGBA', self.scene_texture.size, self.scene_texture.read())
+        # image = Image.frombytes('RGBA', self.scene_texture.size, self.scene_texture.read())
+        pixels = self.ctx.screen.read(components=3)
+        image = Image.frombytes('RGB', self.window_size, pixels)#.transpose(Image.FLIP_TOP_BOTTOM)
         image = image.transpose(Image.FLIP_TOP_BOTTOM).convert("RGB")
         frame_name = f"output/{self.frame_counter:04d}.jpg"
         image.save(frame_name, "JPEG")
